@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouBike Data with Google Sheets</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -40,6 +42,26 @@
 <body>
     <div class="container">
         <h1>YouBike 即時與歷史資料</h1>
+        
+        <div class="info-box">
+            <label for="districts">選擇行政區:</label>
+            <select id="districts">
+                <option value="">全部</option>
+                <option value="大安區">大安區</option>
+                <option value="信義區">信義區</option>
+                <option value="中正區">中正區</option>
+                <option value="松山區">松山區</option>
+                <option value="萬華區">萬華區</option>
+                <option value="北投區">北投區</option>
+                <!-- 可根據需要增加其他行政區 -->
+            </select>
+        </div>
+
+        <div class="info-box">
+            <label for="search">搜尋站名:</label>
+            <input type="text" id="search" placeholder="輸入站名..." />
+        </div>
+
         <div class="info-box">
             <label for="stations">選擇站點:</label>
             <select id="stations"></select>
@@ -62,10 +84,12 @@
 
     <script>
         // Google Sheets API URL
-        const sheetApiUrl = 'https://sheets.googleapis.com/v4/spreadsheets/1VtHNYKPtKvuTEzLKcJlSBTlC3TLUzLqs758O58zJIM8/values/api?key=AIzaSyBkk8htJlYWdu6942xyb2SUhFMuP0t27eE';
+        const sheetApiUrl = 'https://sheets.googleapis.com/v4/spreadsheets/{SPREADSHEET_ID}/values/YouBike History?key={API_KEY}';
 
         // YouBike 2.0 即時資料 API
         const apiUrl = 'https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json';
+
+        let stationData = [];
 
         // 獲取 YouBike 即時資料
         async function getStationData() {
@@ -83,9 +107,7 @@
 
         // 更新站點選擇器和站點資訊
         async function updateStationInfo() {
-            const stationData = await getStationData();
-            const stationSelect = document.getElementById('stations');
-            const selectedStation = stationSelect.value;
+            const selectedStation = document.getElementById('stations').value;
             const stationInfo = stationData.find(station => station.sno === selectedStation);
 
             if (stationInfo) {
@@ -134,20 +156,63 @@
         }
 
         // 初始化頁面
-        document.addEventListener('DOMContentLoaded', () => {
-            getStationData().then(data => {
-                const stationSelect = document.getElementById('stations');
-                data.forEach(station => {
-                    const option = document.createElement('option');
-                    option.value = station.sno;
-                    option.text = `${station.sna} (${station.sarea})`;
-                    stationSelect.appendChild(option);
-                });
-                updateStationInfo();
+        document.addEventListener('DOMContentLoaded', async () => {
+            stationData = await getStationData();
+            const stationSelect = document.getElementById('stations');
+
+            // 填充選擇器
+            stationData.forEach(station => {
+                const option = document.createElement('option');
+                option.value = station.sno;
+                option.text = `${station.sna} (${station.sarea})`;
+                stationSelect.appendChild(option);
             });
 
-            document.getElementById('stations').addEventListener('change', updateStationInfo);
+            // 初始化顯示資訊
+            updateStationInfo();
+
+            // 監聽選擇變更事件
+            stationSelect.addEventListener('change', updateStationInfo);
+
+            // 監聽搜尋欄變更事件
+            document.getElementById('search').addEventListener('input', filterStations);
+            document.getElementById('districts').addEventListener('change', filterStations);
         });
+
+        // 依據搜尋和行政區篩選站點
+        function filterStations() {
+            const searchValue = document.getElementById('search').value.toLowerCase();
+            const selectedDistrict = document.getElementById('districts').value;
+
+            const filteredStations = stationData.filter(station => {
+                const matchesSearch = station.sna.toLowerCase().includes(searchValue);
+                const matchesDistrict = selectedDistrict ? station.sarea === selectedDistrict : true;
+                return matchesSearch && matchesDistrict;
+            });
+
+            // 更新選擇器
+            const stationSelect = document.getElementById('stations');
+            stationSelect.innerHTML = ''; // 清空選擇器
+            filteredStations.forEach(station => {
+                const option = document.createElement('option');
+                option.value = station.sno;
+                option.text = `${station.sna} (${station.sarea})`;
+                stationSelect.appendChild(option);
+            });
+
+            // 如果沒有篩選到的站點，清除資訊
+            if (filteredStations.length === 0) {
+                document.getElementById('station-name').innerText = '';
+                document.getElementById('total-bikes').innerText = '';
+                document.getElementById('available-bikes').innerText = '';
+                document.getElementById('available-return-bikes').innerText = '';
+                document.getElementById('station-location').innerText = '';
+                document.getElementById('update-time').innerText = '';
+                if (map) map.setView([25.0478, 121.5319], 12); // 回到台北市中心
+            } else {
+                updateStationInfo(); // 更新選中的
+            }
+        }
     </script>
 </body>
 </html>
