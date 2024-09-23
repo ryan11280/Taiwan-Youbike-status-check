@@ -92,6 +92,13 @@ function updateRecentSearchesList() {
         const listItem = document.createElement('li');
         listItem.className = 'list-group-item';
         listItem.textContent = stationName;
+        listItem.onclick = () => {
+            const selectedStation = stationData.find(station => station.sna === stationName);
+            if (selectedStation) {
+                stationSelector.value = selectedStation.sno;
+                updateStationInfo(); // 顯示選定的站點資訊
+            }
+        };
         recentSearchesList.appendChild(listItem);
     });
 }

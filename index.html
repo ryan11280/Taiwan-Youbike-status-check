@@ -10,18 +10,21 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Ryan's YouBike Check v3.2.1</h1>
-        <div class="form-group">
-            <label for="districts">選擇行政區：</label>
-            <select id="districts" class="form-control" onchange="populateStations()"></select>
-        </div>
-        <div class="form-group">
-            <label for="station-search">搜尋站點：</label>
-            <input type="text" id="station-search" class="form-control" oninput="filterStations()" placeholder="輸入站點名稱...">
-        </div>
-        <div class="form-group">
-            <label for="stations">選擇站點：</label>
-            <select id="stations" class="form-control" onchange="updateStationInfo()"></select>
+        <h1 class="text-center">Ryan's YouBike Check</h1>
+        
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="districts">選擇行政區：</label>
+                <select id="districts" class="form-control" onchange="populateStations()"></select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="stations">選擇站點：</label>
+                <select id="stations" class="form-control" onchange="updateStationInfo()"></select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="station-search">搜尋站點：</label>
+                <input type="text" id="station-search" class="form-control" oninput="filterStations()" placeholder="輸入站點名稱...">
+            </div>
         </div>
 
         <div id="loading" class="text-center"></div>
