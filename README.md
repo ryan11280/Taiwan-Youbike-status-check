@@ -1,5 +1,7 @@
 # YouBike 即時資訊網站
 
+https://ryan11280.github.io/Taiwan-Youbike-status-check/
+
 ## 介紹
 
 這個應用程式提供台北 YouBike 站點的即時資訊，包括可借車輛數、總車輛數及地理位置。用戶可以透過搜尋欄位和行政區選擇器輕鬆查找特定站點，並查看該站點的使用率趨勢圖表。所有的歷史資料會被儲存到 Google Sheets 中，以便未來的分析和參考。
