@@ -1,0 +1,81 @@
+/* 莫蘭迪色系定義 */
+:root {
+    --morandi-blue: #a8b8c9;
+    --morandi-green: #a3b2a2;
+    --morandi-gray: #d3cbc5;
+    --morandi-pink: #f3d1c3;
+    --text-color: #333;
+}
+
+body {
+    font-family: 'Helvetica Neue', sans-serif;
+    background-color: var(--morandi-gray);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    padding: 20px;
+    max-width: 800px;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+/* 站點選擇器樣式 */
+.station-selector {
+    margin-bottom: 20px;
+}
+
+.station-selector label {
+    font-size: 16px;
+    color: var(--text-color);
+    margin-right: 10px;
+}
+
+.station-selector select {
+    padding: 8px 12px;
+    border: 1px solid var(--morandi-blue);
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: var(--morandi-pink);
+}
+
+/* 站點資訊樣式 */
+#station-info {
+    margin-top: 20px;
+    background-color: var(--morandi-pink);
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#station-info h2, #station-info p {
+    margin: 0;
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+/* 地圖樣式 */
+#map {
+    height: 300px;
+    border: 1px solid var(--morandi-green);
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+/* 租借趨勢圖表 */
+.chart-container {
+    margin-top: 20px;
+}
+
+canvas {
+    max-width: 100%;
+    height: auto;
+}
