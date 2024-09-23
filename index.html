@@ -1,45 +1,153 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouBike 即時資訊查詢</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- 引入 Chart.js 與 Leaflet.js -->
+    <title>YouBike Data with Google Sheets</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #555;
+        }
+        .info-box {
+            margin-bottom: 20px;
+        }
+        #map {
+            width: 100%;
+            height: 400px;
+            margin-bottom: 20px;
+        }
+        canvas {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <!-- 站點選擇器 -->
-        <div class="station-selector">
+        <h1>YouBike 即時與歷史資料</h1>
+        <div class="info-box">
             <label for="stations">選擇站點:</label>
-            <select id="stations" onchange="updateStationInfo()">
-                <!-- 動態生成站點選項 -->
-            </select>
+            <select id="stations"></select>
         </div>
 
-        <!-- 站點資訊顯示 -->
-        <div id="station-info">
-            <h2 id="station-name">站點名稱</h2>
-            <p>區域: <span id="station-area"></span></p>
-            <p>地點: <span id="station-location"></span></p>
+        <div class="info-box">
+            <p>站點名稱: <span id="station-name"></span></p>
+            <p>場站區域: <span id="station-area"></span></p>
             <p>總停車格: <span id="total-bikes"></span></p>
             <p>可借車輛: <span id="available-bikes"></span></p>
             <p>可還車位: <span id="available-return-bikes"></span></p>
-            <p>更新時間: <span id="update-time"></span></p>
+            <p>地點: <span id="station-location"></span></p>
+            <p>資料更新時間: <span id="update-time"></span></p>
         </div>
 
-        <!-- 地圖區域 -->
-        <div id="map" style="height: 300px;"></div>
+        <div id="map"></div>
 
-        <!-- 租借趨勢圖表 -->
-        <div class="chart-container">
-            <canvas id="usage-chart"></canvas>
-        </div>
+        <canvas id="usage-chart" width="400" height="200"></canvas>
     </div>
 
-    <script src="app.js"></script>
+    <script>
+        // Google Sheets API URL
+        const sheetApiUrl = 'https://sheets.googleapis.com/v4/spreadsheets/{SPREADSHEET_ID}/values/YouBike History?key={API_KEY}';
+
+        // YouBike 2.0 即時資料 API
+        const apiUrl = 'https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json';
+
+        // 獲取 YouBike 即時資料
+        async function getStationData() {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            return data;
+        }
+
+        // 獲取 Google Sheets 歷史資料
+        async function getYouBikeHistory() {
+            const response = await fetch(sheetApiUrl);
+            const data = await response.json();
+            return data.values; // 取得表格中的所有行
+        }
+
+        // 更新站點選擇器和站點資訊
+        async function updateStationInfo() {
+            const stationData = await getStationData();
+            const stationSelect = document.getElementById('stations');
+            const selectedStation = stationSelect.value;
+            const stationInfo = stationData.find(station => station.sno === selectedStation);
+
+            if (stationInfo) {
+                // 更新站點資訊
+                document.getElementById('total-bikes').innerText = stationInfo.total; // 總停車格
+                document.getElementById('available-bikes').innerText = stationInfo.available_rent_bikes; // 可借車輛
+                document.getElementById('available-return-bikes').innerText = stationInfo.available_return_bikes; // 可還車位
+                document.getElementById('station-name').innerText = stationInfo.sna; // 站點名稱
+                document.getElementById('station-area').innerText = stationInfo.sarea; // 場站區域
+                document.getElementById('station-location').innerText = stationInfo.ar; // 地點
+                document.getElementById('update-time').innerText = stationInfo.mday; // 更新時間
+
+                // 更新地圖位置
+                updateMap(stationInfo.latitude, stationInfo.longitude);
+
+                // 更新圖表資料
+                updateChart(await getYouBikeHistory());
+            }
+        }
+
+        // 初始化地圖
+        function updateMap(lat, lng) {
+            const map = L.map('map').setView([lat, lng], 16);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+            L.marker([lat, lng]).addTo(map).bindPopup('YouBike Station');
+        }
+
+        // 更新圖表資料
+        function updateChart(historyData) {
+            const labels = historyData.map(row => row[9]); // 資料更新時間
+            const rentData = historyData.map(row => row[4]); // 可借車輛數
+
+            const ctx = document.getElementById('usage-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '可借車輛數',
+                        data: rentData,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        fill: false
+                    }]
+                }
+            });
+        }
+
+        // 初始化頁面
+        document.addEventListener('DOMContentLoaded', () => {
+            getStationData().then(data => {
+                const stationSelect = document.getElementById('stations');
+                data.forEach(station => {
+                    const option = document.createElement('option');
+                    option.value = station.sno;
+                    option.text = `${station.sna} (${station.sarea})`;
+                    stationSelect.appendChild(option);
+                });
+                updateStationInfo();
+            });
+
+            document.getElementById('stations').addEventListener('change', updateStationInfo);
+        });
+    </script>
 </body>
 </html>
