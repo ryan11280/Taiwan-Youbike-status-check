@@ -20,7 +20,7 @@ async function fetchYouBikeData() {
         allStations = data;
         populateDistricts();
         updateFixedStations();
-        updateStationInfo("YouBike2.0_明美公園");
+        updateStationInfo("YouBike2.0_明美公園"); // 預設顯示明美公園資訊
     } catch (error) {
         console.error("Error fetching YouBike data:", error);
     }
@@ -48,7 +48,7 @@ function populateStations() {
         .filter(station => station.sarea === district)
         .forEach(station => {
             const option = document.createElement('option');
-            option.value = station.sno;
+            option.value = station.sna;
             option.textContent = station.sna;
             stationsSelect.appendChild(option);
         });
@@ -113,8 +113,16 @@ function filterStations() {
 function updateFixedStations() {
     fixedStations.forEach((station, index) => {
         const stationData = allStations.find(s => s.sna === station.name) || {};
-        document.getElementById(`fixed-station-${index + 1}-available`).textContent = stationData.available_rent_bikes || 0;
-        document.getElementById(`fixed-station-${index + 1}-total`).textContent = stationData.total || 0;
+        const available = stationData.available_rent_bikes || 0;
+        const total = stationData.total || 0;
+
+        document.getElementById(`fixed-station-${index + 1}-available`).textContent = available;
+        document.getElementById(`fixed-station-${index + 1}-total`).textContent = total;
+
+        // Initialize fixed station data to ensure display
+        if (index === 0) {
+            updateStationInfo(station.name); // 顯示明美公園的資訊
+        }
     });
 }
 
