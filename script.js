@@ -3,6 +3,7 @@ const districtSelector = document.getElementById('districts');
 const stationSelector = document.getElementById('stations');
 const recentSearchesList = document.getElementById('recent-searches');
 let recentSearches = [];
+let map; // 移動地圖到全域變數
 
 async function fetchYouBikeData() {
     const response = await fetch('https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json');
@@ -57,24 +58,28 @@ function updateStationInfo() {
         document.getElementById('update-time').innerText = `更新時間: ${stationInfo.mday}`;
         document.getElementById('total-bikes').innerText = `總停車格: ${stationInfo.total}`;
         document.getElementById('available-bikes').innerText = `可借車輛: ${stationInfo.available_rent_bikes}`;
-        updateMap(stationInfo.latitude, stationInfo.longitude);
         
+        updateMap(stationInfo.latitude, stationInfo.longitude);
         recordRecentSearch(stationInfo.sna);
     }
 }
 
 function updateMap(latitude, longitude) {
-    const map = L.map('map').setView([latitude, longitude], 15);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-    }).addTo(map);
+    if (!map) {
+        map = L.map('map').setView([latitude, longitude], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+    } else {
+        map.setView([latitude, longitude], 15); // 更新地圖中心
+    }
     L.marker([latitude, longitude]).addTo(map).bindPopup('選定的站點').openPopup();
 }
 
 function recordRecentSearch(stationName) {
     if (!recentSearches.includes(stationName)) {
         if (recentSearches.length >= 3) {
-            recentSearches.shift(); // Remove the oldest search
+            recentSearches.shift(); // 移除最舊的查詢
         }
         recentSearches.push(stationName);
         updateRecentSearchesList();
