@@ -5,42 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ryan's YouBike Check</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
-    <div class="container">
-        <h1>Ryan's YouBike Check</h1>
-        <div>
+    <div class="container mt-5">
+        <h1 class="text-center">Ryan's YouBike Check</h1>
+        <div class="form-group">
             <label for="districts">選擇行政區：</label>
-            <select id="districts"></select>
-            
-            <label for="search">搜尋站名：</label>
-            <input type="text" id="search" placeholder="輸入站名...">
+            <select id="districts" class="form-control" onchange="populateStations()"></select>
         </div>
-        
-        <div>
+        <div class="form-group">
             <label for="stations">選擇站點：</label>
-            <select id="stations"></select>
-        </div>
-        
-        <div id="station-info">
-            <p>站名：<span id="station-name"></span></p>
-            <p>區域：<span id="station-area"></span></p>
-            <p>可借車輛數：<span id="available-bikes"></span></p>
-            <p>總車輛數：<span id="total-bikes"></span></p>
-            <p>更新時間：<span id="update-time"></span></p>
-            <p>位置：<span id="station-location"></span></p>
+            <select id="stations" class="form-control" onchange="updateStationInfo()"></select>
         </div>
 
-        <div id="loading" style="display: none;">Loading...</div>
-        
-        <div id="map" style="height: 300px; margin-top: 20px;"></div>
-        
+        <div id="loading" class="text-center"></div>
+        <div id="station-info" class="mt-4">
+            <h4>站點資訊</h4>
+            <p id="station-name"><strong>站點名稱:</strong> 無數據</p>
+            <p id="station-area"><strong>行政區:</strong> 無數據</p>
+            <p id="station-location"><strong>位置:</strong> 無數據</p>
+            <p id="update-time"><strong>更新時間:</strong> 無數據</p>
+            <p id="total-bikes"><strong>總停車格:</strong> 無數據</p>
+            <p id="available-bikes"><strong>可借車輛:</strong> 無數據</p>
+        </div>
+
+        <div id="map" style="height: 400px; margin-top: 20px;"></div>
         <canvas id="usage-chart" style="margin-top: 20px;"></canvas>
     </div>
 
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
