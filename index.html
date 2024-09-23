@@ -1,266 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouBike Data with Google Sheets</title>
+    <title>Ryan's YouBike Check</title>
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-            margin: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #555;
-        }
-        .info-box {
-            margin-bottom: 20px;
-        }
-        #map {
-            width: 100%;
-            height: 400px;
-            margin-bottom: 20px;
-        }
-        canvas {
-            margin-top: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
     <div class="container">
-        <h1>YouBike 即時與歷史資料</h1>
+        <h1>Ryan's YouBike Check</h1>
+        <div>
+            <label for="districts">選擇行政區：</label>
+            <select id="districts"></select>
+            
+            <label for="search">搜尋站名：</label>
+            <input type="text" id="search" placeholder="輸入站名...">
+        </div>
         
-        <div class="info-box">
-            <label for="districts">選擇行政區:</label>
-            <select id="districts">
-                <option value="">全部</option>
-                <option value="大安區">大安區</option>
-                <option value="信義區">信義區</option>
-                <option value="中正區">中正區</option>
-                <option value="中山區">中山區</option>
-                <option value="松山區">松山區</option>
-                <option value="萬華區">萬華區</option>
-                <option value="北投區">北投區</option>
-                <option value="內湖區">內湖區</option>
-                <!-- 可根據需要增加其他行政區 -->
-            </select>
-        </div>
-
-        <div class="info-box">
-            <label for="search">搜尋站名:</label>
-            <input type="text" id="search" placeholder="輸入站名..." />
-        </div>
-
-        <div class="info-box">
-            <label for="stations">選擇站點:</label>
+        <div>
+            <label for="stations">選擇站點：</label>
             <select id="stations"></select>
         </div>
-
-        <div class="info-box">
-            <p>站點名稱: <span id="station-name"></span></p>
-            <p>場站區域: <span id="station-area"></span></p>
-            <p>總停車格: <span id="total-bikes"></span></p>
-            <p>可借車輛: <span id="available-bikes"></span></p>
-            <p>可還車位: <span id="available-return-bikes"></span></p>
-            <p>地點: <span id="station-location"></span></p>
-            <p>資料更新時間: <span id="update-time"></span></p>
+        
+        <div id="station-info">
+            <p>站名：<span id="station-name"></span></p>
+            <p>區域：<span id="station-area"></span></p>
+            <p>可借車輛數：<span id="available-bikes"></span></p>
+            <p>總車輛數：<span id="total-bikes"></span></p>
+            <p>更新時間：<span id="update-time"></span></p>
+            <p>位置：<span id="station-location"></span></p>
         </div>
 
-        <div id="map"></div>
-
-        <canvas id="usage-chart" width="400" height="200"></canvas>
+        <div id="loading" style="display: none;">Loading...</div>
+        
+        <div id="map" style="height: 300px; margin-top: 20px;"></div>
+        
+        <canvas id="usage-chart" style="margin-top: 20px;"></canvas>
     </div>
 
-    <script>
-        // Google Sheets API URL
-    
-        // YouBike 2.0 即時資料 API
-        const apiUrl = 'https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json';
-
-        let stationData = [];
-
-        async function saveToGoogleSheet(stationInfo) {
-    const response = await fetch('https://script.google.com/macros/s/AKfycby1qZTbeZoK2T9ZhANYiM9FFYNJ9WZxZn814jF2u8_vZ9OGi473yMmZQj8DiMq4ZwH1/exec', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            sno: stationInfo.sno,
-            sna: stationInfo.sna,
-            sarea: stationInfo.sarea,
-            total: stationInfo.total,
-            available_rent_bikes: stationInfo.available_rent_bikes,
-            available_return_bikes: stationInfo.available_return_bikes,
-            update_time: stationInfo.mday,
-            info_time: stationInfo.infoTime
-        })
-    });
-
-    const result = await response.json();
-    console.log(result);
-}
-
-        // 在更新站點資訊的函數中調用 saveToGoogleSheet
-        async function updateStationInfo() {
-            const selectedStation = document.getElementById('stations').value;
-            const stationInfo = stationData.find(station => station.sno === selectedStation);
-
-            if (stationInfo) {
-                // 更新站點資訊
-                document.getElementById('total-bikes').innerText = stationInfo.total;
-                document.getElementById('available-bikes').innerText = stationInfo.available_rent_bikes;
-                document.getElementById('available-return-bikes').innerText = stationInfo.available_return_bikes;
-                document.getElementById('station-name').innerText = stationInfo.sna;
-                document.getElementById('station-area').innerText = stationInfo.sarea;
-                document.getElementById('station-location').innerText = stationInfo.ar;
-                document.getElementById('update-time').innerText = stationInfo.mday;
-
-                // 更新地圖位置
-                updateMap(stationInfo.latitude, stationInfo.longitude);
-
-                // 儲存到 Google Sheets
-                await saveToGoogleSheet(stationInfo);
-
-                // 更新圖表資料
-                updateChart(await getYouBikeHistory());
-            }
-        }
-        // 獲取 YouBike 即時資料
-        async function getStationData() {
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-            return data;
-        }
-
-        // 獲取 Google Sheets 歷史資料
-        async function getYouBikeHistory() {
-            const response = await fetch(sheetApiUrl);
-            const data = await response.json();
-            return data.values; // 取得表格中的所有行
-        }
-
-        // 更新站點選擇器和站點資訊
-        async function updateStationInfo() {
-            const selectedStation = document.getElementById('stations').value;
-            const stationInfo = stationData.find(station => station.sno === selectedStation);
-
-            if (stationInfo) {
-                // 更新站點資訊
-                document.getElementById('total-bikes').innerText = stationInfo.total; // 總停車格
-                document.getElementById('available-bikes').innerText = stationInfo.available_rent_bikes; // 可借車輛
-                document.getElementById('available-return-bikes').innerText = stationInfo.available_return_bikes; // 可還車位
-                document.getElementById('station-name').innerText = stationInfo.sna; // 站點名稱
-                document.getElementById('station-area').innerText = stationInfo.sarea; // 場站區域
-                document.getElementById('station-location').innerText = stationInfo.ar; // 地點
-                document.getElementById('update-time').innerText = stationInfo.mday; // 更新時間
-
-                // 更新地圖位置
-                updateMap(stationInfo.latitude, stationInfo.longitude);
-
-                // 更新圖表資料
-                updateChart(await getYouBikeHistory());
-            }
-        }
-
-        // 初始化地圖
-        function updateMap(lat, lng) {
-            const map = L.map('map').setView([lat, lng], 16);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-            L.marker([lat, lng]).addTo(map).bindPopup('YouBike Station');
-        }
-
-        // 更新圖表資料
-        function updateChart(historyData) {
-            const labels = historyData.map(row => row[9]); // 資料更新時間
-            const rentData = historyData.map(row => row[4]); // 可借車輛數
-
-            const ctx = document.getElementById('usage-chart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '可借車輛數',
-                        data: rentData,
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        fill: false
-                    }]
-                }
-            });
-        }
-
-        // 初始化頁面
-        document.addEventListener('DOMContentLoaded', async () => {
-            stationData = await getStationData();
-            const stationSelect = document.getElementById('stations');
-
-            // 填充選擇器
-            stationData.forEach(station => {
-                const option = document.createElement('option');
-                option.value = station.sno;
-                option.text = `${station.sna} (${station.sarea})`;
-                stationSelect.appendChild(option);
-            });
-
-            // 初始化顯示資訊
-            updateStationInfo();
-
-            // 監聽選擇變更事件
-            stationSelect.addEventListener('change', updateStationInfo);
-
-            // 監聽搜尋欄變更事件
-            document.getElementById('search').addEventListener('input', filterStations);
-            document.getElementById('districts').addEventListener('change', filterStations);
-        });
-
-        // 依據搜尋和行政區篩選站點
-        function filterStations() {
-            const searchValue = document.getElementById('search').value.toLowerCase();
-            const selectedDistrict = document.getElementById('districts').value;
-
-            const filteredStations = stationData.filter(station => {
-                const matchesSearch = station.sna.toLowerCase().includes(searchValue);
-                const matchesDistrict = selectedDistrict ? station.sarea === selectedDistrict : true;
-                return matchesSearch && matchesDistrict;
-            });
-
-            // 更新選擇器
-            const stationSelect = document.getElementById('stations');
-            stationSelect.innerHTML = ''; // 清空選擇器
-            filteredStations.forEach(station => {
-                const option = document.createElement('option');
-                option.value = station.sno;
-                option.text = `${station.sna} (${station.sarea})`;
-                stationSelect.appendChild(option);
-            });
-
-            // 如果沒有篩選到的站點，清除資訊
-            if (filteredStations.length === 0) {
-                document.getElementById('station-name').innerText = '';
-                document.getElementById('total-bikes').innerText = '';
-                document.getElementById('available-bikes').innerText = '';
-                document.getElementById('available-return-bikes').innerText = '';
-                document.getElementById('station-location').innerText = '';
-                document.getElementById('update-time').innerText = '';
-                if (map) map.setView([25.0478, 121.5319], 12); // 回到台北市中心
-            } else {
-                updateStationInfo(); // 更新選中的
-            }
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
