@@ -1,66 +1,68 @@
-以下是根據最新版本的完整 README 文件：
+# Ryan's YouBike Check
 
----
+https://ryan11280.github.io/Taiwan-Youbike-status-check/
 
-# Ryan's YouBike Check v3.4.0
+## Introduction
 
-## 介紹
+Ryan's YouBike Check is a web application that provides real-time information about YouBike stations in Taipei. Users can view information such as the number of available bikes, total parking spots, location, and last updated time for each station. The application also allows users to filter stations by administrative district or search for specific stations. Recent queries are recorded for quick access.
 
-Ryan's YouBike Check 是一個提供台北 YouBike 即時資訊的網頁應用程式。使用者可以透過此應用程式查看各個 YouBike 站點的可借車輛數量、總停車格、位置、更新時間等資訊，並可以選擇特定的行政區或搜尋站點。應用程式還提供了最近查詢的站點歷史記錄，便於快速訪問。
+## Features
 
-## 功能
+- **Real-time Information**: Displays up-to-date data for all YouBike stations.
+- **District Selection**: Filter stations based on the selected administrative district.
+- **Station Search**: Real-time filtering of the station list based on user input.
+- **Recent Queries History**: Records the last three queries for quick reference.
+- **Map Marking**: Marks all stations on the map and updates the selected station's location.
+- **Visually Appealing Interface**: Designed with a Morandi color scheme and iconography for enhanced aesthetics.
 
-- **即時資訊查詢**：顯示所有 YouBike 站點的即時數據。
-- **行政區選擇**：根據行政區篩選站點。
-- **站點搜尋**：即時過濾站點列表。
-- **最近查詢記錄**：記錄最近查詢的三筆站點資訊。
-- **地圖標示**：在地圖上標示所有站點及選定的站點。
-- **美觀的界面**：使用莫蘭迪配色和字體圖標美化設計。
+## Usage Instructions
 
-## 使用教學
+### Environment Requirements
 
-### 環境需求
+- A web browser (recommended to use the latest version of Chrome or Firefox)
 
-- 瀏覽器（建議使用最新版本的 Chrome 或 Firefox）
+### Deployment Steps
 
-### 部署步驟
+1. **Download Project Files**
+   - Download or clone this project's Git repository.
 
-1. **下載專案檔案**
-   - 下載或克隆此專案的 Git 倉庫。
+2. **Open the Project**
+   - Open the `index.html` file in your web browser.
 
-2. **開啟專案**
-   - 在瀏覽器中打開 `index.html` 文件。
+3. **Using the Application**
+   - On the webpage, you can select an administrative district and a station, or use the search box to input a station name for real-time queries.
+   - Click on recent queries to quickly view information about those stations.
+   - The map will display all stations and update the center based on your selection.
 
-3. **使用應用程式**
-   - 在網頁上，您可以選擇行政區和站點，或使用搜尋框輸入站點名稱進行即時查詢。
-   - 點擊最近查詢的站點以快速查看該站點的資訊。
-   - 地圖上會顯示所有站點，並根據您的選擇更新中心位置。
-
-## 程式碼結構
+## Code Structure
 
 ```
 /Ryan's YouBike Check
-├── index.html       # 主 HTML 文件
-├── styles.css       # CSS 樣式文件
-└── script.js        # JavaScript 功能文件
+├── index.html       # Main HTML file
+├── styles.css       # CSS stylesheet
+└── script.js        # JavaScript functionality file
 ```
 
-### 程式碼簡介
+### Code Explanation
 
-- **index.html**：主要的網頁結構和界面元素，包括行政區、站點下拉選單、搜尋框、地圖和最近查詢記錄的顯示。
-- **styles.css**：使用 CSS 進行網頁樣式設計，包含顏色、字型和佈局等樣式。
-- **script.js**：主要的 JavaScript 代碼，負責數據獲取、下拉選單填充、地圖更新和最近查詢的記錄等功能。
+- **index.html**: Contains the main webpage structure and UI elements, including dropdowns for districts and stations, a search box, map, and recent query records.
+- **styles.css**: Styles for the webpage, including colors, fonts, and layout.
+- **script.js**: Main JavaScript code responsible for data fetching, populating dropdowns, updating the map, and recording recent queries.
 
-## 成果展示
+## Demo
+ 
+### Web Interface
 
-### 網頁界面
+- User-friendly and intuitive interface.
+- Displays real-time information about YouBike stations.
+- Visualizes station data on a map.
 
-- 清晰易用的操作介面。
-- 即時顯示的 YouBike 站點資訊。
-- 美觀的地圖視覺化效果。
+### Use Cases
 
-### 使用案例
+1. Users can select a specific administrative district to filter stations.
+2. Quickly find desired stations using the search box.
+3. Access recently queried stations to retrieve relevant information instantly.
 
-1. 使用者可以選擇特定的行政區來篩選站點。
-2. 透過搜尋框，快速找到想要的站點。
-3. 點擊最近查詢的站點，迅速獲取相關資訊。
+## Contribution
+
+If you have any suggestions or want to report issues, please feel free to reach out! We welcome contributions in any form.
