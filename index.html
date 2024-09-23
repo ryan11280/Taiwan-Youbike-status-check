@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center" style="color: #4A4A4A;">Ryan's YouBike Check v3.4.2</h1>
+        <h1 class="text-center" style="color: #4A4A4A;">Ryan's YouBike Check v3.5.0</h1>
         
         <div class="form-row">
             <div class="form-group col-md-4">
@@ -29,9 +29,11 @@
         </div>
 
         <div id="loading" class="text-center"></div>
+
+        <!-- Station Information Section -->
         <div id="station-info" class="mt-4">
             <h4>站點資訊</h4>
-            <p id="station-name"><strong>站點名稱:</strong> 無數據</p>
+            <p id="station-name"><strong>站點名稱:</strong> YouBike2.0_明美公園</p>
             <p id="station-area"><strong>行政區:</strong> 無數據</p>
             <p id="station-location"><strong>位置:</strong> 無數據</p>
             <p id="update-time"><strong>更新時間:</strong> 無數據</p>
@@ -39,8 +41,34 @@
             <p id="available-bikes"><strong>可借車輛:</strong> 無數據</p>
         </div>
 
+        <!-- Recent Searches Section -->
         <h5 class="mt-4">最近查詢的站點</h5>
         <ul id="recent-searches" class="list-group" style="font-size: small;"></ul>
+
+        <!-- Fixed Stations Section -->
+        <div class="mt-4">
+            <h5>固定顯示站點</h5>
+            <div class="d-flex justify-content-between">
+                <div class="card text-center" style="width: 30%;">
+                    <div class="card-body">
+                        <h6 class="card-title">YouBike2.0_明美公園</h6>
+                        <p class="card-text" id="fixed-station-1-info">可借: <span id="fixed-station-1-available"></span> / 總格數: <span id="fixed-station-1-total"></span></p>
+                    </div>
+                </div>
+                <div class="card text-center" style="width: 30%;">
+                    <div class="card-body">
+                        <h6 class="card-title">YouBike2.0_行善社會住宅</h6>
+                        <p class="card-text" id="fixed-station-2-info">可借: <span id="fixed-station-2-available"></span> / 總格數: <span id="fixed-station-2-total"></span></p>
+                    </div>
+                </div>
+                <div class="card text-center" style="width: 30%;">
+                    <div class="card-body">
+                        <h6 class="card-title">YouBike2.0_行善行愛路口</h6>
+                        <p class="card-text" id="fixed-station-3-info">可借: <span id="fixed-station-3-available"></span> / 總格數: <span id="fixed-station-3-total"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div id="map" style="height: 400px; margin-top: 20px;"></div>
         <canvas id="usage-chart" style="margin-top: 20px;"></canvas>
