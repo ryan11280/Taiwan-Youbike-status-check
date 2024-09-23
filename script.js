@@ -3,12 +3,14 @@ const districtSelector = document.getElementById('districts');
 const stationSelector = document.getElementById('stations');
 const recentSearchesList = document.getElementById('recent-searches');
 let recentSearches = [];
-let map; // 移動地圖到全域變數
+let map;
 
 async function fetchYouBikeData() {
     const response = await fetch('https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json');
     stationData = await response.json();
     populateDistricts();
+    displayAllStations(); // 顯示所有站點
+    setDefaultStation();  // 設定預設站點
 }
 
 function populateDistricts() {
@@ -64,6 +66,26 @@ function updateStationInfo() {
     }
 }
 
+function displayAllStations() {
+    stationData.forEach(station => {
+        addMarker(station);
+    });
+}
+
+function addMarker(station) {
+    const { latitude, longitude, sna } = station;
+    const marker = L.marker([latitude, longitude]).addTo(map);
+    marker.bindPopup(sna);
+}
+
+function setDefaultStation() {
+    const defaultStation = stationData.find(station => station.sna === "YouBike2.0_明美公園");
+    if (defaultStation) {
+        stationSelector.value = defaultStation.sno;
+        updateStationInfo();
+    }
+}
+
 function updateMap(latitude, longitude) {
     if (!map) {
         map = L.map('map').setView([latitude, longitude], 15);
@@ -73,7 +95,6 @@ function updateMap(latitude, longitude) {
     } else {
         map.setView([latitude, longitude], 15); // 更新地圖中心
     }
-    L.marker([latitude, longitude]).addTo(map).bindPopup('選定的站點').openPopup();
 }
 
 function recordRecentSearch(stationName) {
