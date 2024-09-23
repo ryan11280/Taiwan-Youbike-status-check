@@ -1,6 +1,8 @@
 let stationData = [];
 const districtSelector = document.getElementById('districts');
 const stationSelector = document.getElementById('stations');
+const recentSearchesList = document.getElementById('recent-searches');
+let recentSearches = [];
 
 async function fetchYouBikeData() {
     const response = await fetch('https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json');
@@ -31,6 +33,19 @@ function populateStations() {
     });
 }
 
+function filterStations() {
+    const searchTerm = document.getElementById('station-search').value.toLowerCase();
+    const filteredStations = stationData.filter(station => station.sna.toLowerCase().includes(searchTerm));
+    
+    stationSelector.innerHTML = '';
+    filteredStations.forEach(station => {
+        const option = document.createElement('option');
+        option.value = station.sno;
+        option.textContent = station.sna;
+        stationSelector.appendChild(option);
+    });
+}
+
 function updateStationInfo() {
     const selectedStation = stationSelector.value;
     const stationInfo = stationData.find(station => station.sno === selectedStation);
@@ -43,7 +58,8 @@ function updateStationInfo() {
         document.getElementById('total-bikes').innerText = `總停車格: ${stationInfo.total}`;
         document.getElementById('available-bikes').innerText = `可借車輛: ${stationInfo.available_rent_bikes}`;
         updateMap(stationInfo.latitude, stationInfo.longitude);
-        // 這裡可以增加獲取歷史數據的邏輯並繪製圖表
+        
+        recordRecentSearch(stationInfo.sna);
     }
 }
 
@@ -53,6 +69,26 @@ function updateMap(latitude, longitude) {
         maxZoom: 19,
     }).addTo(map);
     L.marker([latitude, longitude]).addTo(map).bindPopup('選定的站點').openPopup();
+}
+
+function recordRecentSearch(stationName) {
+    if (!recentSearches.includes(stationName)) {
+        if (recentSearches.length >= 3) {
+            recentSearches.shift(); // Remove the oldest search
+        }
+        recentSearches.push(stationName);
+        updateRecentSearchesList();
+    }
+}
+
+function updateRecentSearchesList() {
+    recentSearchesList.innerHTML = '';
+    recentSearches.forEach(stationName => {
+        const listItem = document.createElement('li');
+        listItem.className = 'list-group-item';
+        listItem.textContent = stationName;
+        recentSearchesList.appendChild(listItem);
+    });
 }
 
 fetchYouBikeData();

@@ -41,3 +41,8 @@ canvas {
     background: #ffffff; /* White background for chart */
     border-radius: 5px;
 }
+
+#recent-searches {
+    max-height: 150px;
+    overflow-y: auto;
+}

@@ -16,6 +16,10 @@
             <select id="districts" class="form-control" onchange="populateStations()"></select>
         </div>
         <div class="form-group">
+            <label for="station-search">搜尋站點：</label>
+            <input type="text" id="station-search" class="form-control" oninput="filterStations()" placeholder="輸入站點名稱...">
+        </div>
+        <div class="form-group">
             <label for="stations">選擇站點：</label>
             <select id="stations" class="form-control" onchange="updateStationInfo()"></select>
         </div>
@@ -33,6 +37,9 @@
 
         <div id="map" style="height: 400px; margin-top: 20px;"></div>
         <canvas id="usage-chart" style="margin-top: 20px;"></canvas>
+
+        <h5 class="mt-4">最近查詢的站點</h5>
+        <ul id="recent-searches" class="list-group"></ul>
     </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
