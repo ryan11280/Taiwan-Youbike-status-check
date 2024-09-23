@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center text-success">Ryan's YouBike Check v3.4.0</h1>
+        <h1 class="text-center" style="color: #4A4A4A;">Ryan's YouBike Check v3.4.1</h1>
         
         <div class="form-row">
             <div class="form-group col-md-4">
@@ -39,11 +39,11 @@
             <p id="available-bikes"><strong>可借車輛:</strong> 無數據</p>
         </div>
 
+        <h5 class="mt-4">最近查詢的站點</h5>
+        <ul id="recent-searches" class="list-group" style="font-size: small;"></ul>
+
         <div id="map" style="height: 400px; margin-top: 20px;"></div>
         <canvas id="usage-chart" style="margin-top: 20px;"></canvas>
-
-        <h5 class="mt-4">最近查詢的站點</h5>
-        <ul id="recent-searches" class="list-group"></ul>
     </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
