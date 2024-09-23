@@ -1,4 +1,4 @@
-/* 配置莫蘭迪色系 */
+/* 莫蘭迪色系定義 */
 :root {
     --morandi-blue: #a8b8c9;
     --morandi-green: #a3b2a2;
@@ -47,30 +47,27 @@ body {
     background-color: var(--morandi-pink);
 }
 
-/* 地圖與站點資訊 */
-.map-info {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-#map {
-    height: 300px;
-    border: 1px solid var(--morandi-green);
-    border-radius: 5px;
-}
-
+/* 站點資訊樣式 */
 #station-info {
+    margin-top: 20px;
     background-color: var(--morandi-pink);
-    padding: 10px;
+    padding: 15px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-#station-info p {
+#station-info h2, #station-info p {
     margin: 0;
     font-size: 16px;
     color: var(--text-color);
+}
+
+/* 地圖樣式 */
+#map {
+    height: 300px;
+    border: 1px solid var(--morandi-green);
+    border-radius: 5px;
+    margin-top: 20px;
 }
 
 /* 租借趨勢圖表 */

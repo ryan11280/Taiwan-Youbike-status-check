@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouBike 即時資訊查詢</title>
     <link rel="stylesheet" href="style.css">
-    <!-- 使用 Chart.js 與 Leaflet.js -->
+    <!-- 引入 Chart.js 與 Leaflet.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
     <div class="container">
-        <!-- 站點選擇 -->
+        <!-- 站點選擇器 -->
         <div class="station-selector">
             <label for="stations">選擇站點:</label>
             <select id="stations" onchange="updateStationInfo()">
@@ -20,14 +20,19 @@
             </select>
         </div>
 
-        <!-- 地圖與即時資訊 -->
-        <div class="map-info">
-            <div id="map"></div>
-            <div id="station-info">
-                <p>總車輛數: <span id="total-bikes"></span></p>
-                <p>可借車輛數: <span id="available-bikes"></span></p>
-            </div>
+        <!-- 站點資訊顯示 -->
+        <div id="station-info">
+            <h2 id="station-name">站點名稱</h2>
+            <p>區域: <span id="station-area"></span></p>
+            <p>地點: <span id="station-location"></span></p>
+            <p>總停車格: <span id="total-bikes"></span></p>
+            <p>可借車輛: <span id="available-bikes"></span></p>
+            <p>可還車位: <span id="available-return-bikes"></span></p>
+            <p>更新時間: <span id="update-time"></span></p>
         </div>
+
+        <!-- 地圖區域 -->
+        <div id="map" style="height: 300px;"></div>
 
         <!-- 租借趨勢圖表 -->
         <div class="chart-container">
